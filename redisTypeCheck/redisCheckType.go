@@ -17,8 +17,10 @@ func main() {
 	fmt.Println("Starting...")
 	// Initialize variables
 	pattern := flag.String("pattern", "", "pattern to use in SCAN, default empty string")
-	batchSize := flag.Int("batchSize", 10, "The size of the batch to use in the SCAN, default 10")
-	separator := flag.String("separator", ":", "separator used in key names, default :")
+	batchSize := flag.Int("batchSize", 10, "The size of the batch to use in the SCAN")
+	separator := flag.String("separator", ":", "separator used in key names")
+	Addr := flag.String("Addr", "127.0.0.1:6379", "Redis host")
+	Db := flag.Int("db", 10, "The logical database to query")
 	flag.Parse()
 
 	var cursor uint64
@@ -30,9 +32,9 @@ func main() {
 
 	// Create redis client
 	rdb := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
-		Password: "", // no password set
-		DB:       0,  // use default DB
+		Addr:     *Addr,
+		Password: "",  // no password set
+		DB:       *Db, // use default DB
 	})
 
 	keys, cursor, err = rdb.Scan(ctx, cursor, *pattern, int64(*batchSize)).Result()
