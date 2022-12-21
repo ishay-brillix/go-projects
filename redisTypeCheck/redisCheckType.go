@@ -14,13 +14,14 @@ import (
 var ctx = context.Background()
 
 func main() {
-	fmt.Println("Starting...")
 	// Initialize variables
 	pattern := flag.String("pattern", "", "pattern to use in SCAN, default empty string")
 	batchSize := flag.Int("batchSize", 10, "The size of the batch to use in the SCAN")
 	separator := flag.String("separator", ":", "separator used in key names")
 	Addr := flag.String("Addr", "127.0.0.1:6379", "Redis host")
-	Db := flag.Int("db", 10, "The logical database to query")
+	Db := flag.Int("db", 0, "The logical database to query")
+	det_keyspace_file := flag.String("keyspace_summ_file", "detailed_keyspace.json", "The file name in which to output the keyspace summary")
+	data_types_file := flag.String("datatypes_summ_file", "data_types_summ.json", "The file name in which to output the data types summary")
 	flag.Parse()
 
 	var cursor uint64
@@ -54,9 +55,9 @@ func main() {
 	}
 	keyspaceJson, _ := json.Marshal(keyspace)
 	dataTypesJson, _ := json.Marshal(dataTypes)
-	err = os.WriteFile("detailed_keyspace.json", keyspaceJson, 0644)
+	err = os.WriteFile(*det_keyspace_file, keyspaceJson, 0644)
 	check(err)
-	err = os.WriteFile("data_types_count.json", dataTypesJson, 0644)
+	err = os.WriteFile(*data_types_file, dataTypesJson, 0644)
 	check(err)
 	fmt.Println("Total keys processed:", prog)
 	// wg.Done()
